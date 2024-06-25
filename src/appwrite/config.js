@@ -44,4 +44,42 @@ async deletePost(slug){
         return false;
     }
 }
+
+async getPost(slug){
+    try {
+        return await this.database.getDocument(conf.appwriteDatabaseId,conf.appwriteCollectionId,slug);
+    } catch (error) {
+        console.log("AppwriteService :: getPost :: error",error);
+    }
+
 }
+async getPosts(queries=Query.equal("status","active")){
+    try {
+        return await this.database.listDocuments(conf.appwriteDatabaseId,conf.appwriteCollectionId,queries);
+    } catch (error) {
+        console.log("AppwriteService :: getPosts :: error",error);
+        return false;
+    }
+}
+// file upload servies introduced
+async uploadFile(file){
+try {
+    return await this.bucket.createFile(conf.appwriteBucketId,ID.unique(),file);
+} catch (error) {
+    console.log("AppwriteService :: uploadFile :: error",error);
+}
+}
+
+async deleteFile(fileId){
+    try {
+        await this.bucket.deleteFile(conf.appwriteBucketId,fileId);
+        return true;
+    } catch (error) {
+        console.log("AppwriteService :: deleteFile :: error",error);
+        return false;
+    }
+}
+
+}
+const service=new AppwriteService();
+export default service;
